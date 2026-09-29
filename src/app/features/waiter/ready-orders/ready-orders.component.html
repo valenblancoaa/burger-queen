@@ -1,0 +1,91 @@
+<div class="page">
+  <header class="page__header">
+    <div>
+      <h1>Listos para servir</h1>
+      <p>Cocina ya terminó estos pedidos. Márcalos al entregarlos en la mesa.</p>
+    </div>
+  </header>
+
+  @if (error) {
+    <p class="alert alert--error" role="alert">{{ error }}</p>
+  }
+
+  @if (loading()) {
+    <p class="empty">Cargando pedidos…</p>
+  } @else if (ready().length === 0) {
+    <p class="empty">No hay pedidos listos por ahora.</p>
+  } @else {
+    <div class="board">
+      @for (order of ready(); track order.id) {
+        <article class="ticket">
+          <header class="ticket__head">
+            <div>
+              <strong>{{ order.client }}</strong>
+              <span class="ticket__meta">#{{ order.id }} · listo desde {{ time(order.dateProcessed) }}</span>
+            </div>
+            <span class="tag tag--delivering">Listo</span>
+          </header>
+
+          <ul class="ticket__items">
+            @for (item of order.products; track item.product.id) {
+              <li><span class="qty">{{ item.qty }}×</span> {{ item.product.name }}</li>
+            }
+          </ul>
+
+          <div class="ticket__foot">
+            <span>Total <strong>{{ total(order) | currency: 'USD' : 'symbol' : '1.0-2' }}</strong></span>
+            <button
+              class="btn btn--primary btn--sm"
+              type="button"
+              [disabled]="updatingId === order.id"
+              (click)="markDelivered(order)"
+            >
+              {{ updatingId === order.id ? 'Guardando…' : 'Marcar entregado' }}
+            </button>
+          </div>
+        </article>
+      }
+    </div>
+  }
+
+  <section class="history">
+    <button class="btn btn--ghost btn--sm" type="button" (click)="toggleDelivered()">
+      {{ showDelivered() ? 'Ocultar' : 'Ver' }} entregados ({{ delivered().length }})
+    </button>
+
+    @if (showDelivered()) {
+      @if (delivered().length === 0) {
+        <p class="empty">Aún no hay pedidos entregados.</p>
+      } @else {
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>Cliente/a</th>
+                <th>Productos</th>
+                <th>Hora del pedido</th>
+                <th>Total</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (order of delivered(); track order.id) {
+                <tr>
+                  <td>{{ order.id }}</td>
+                  <td>{{ order.client }}</td>
+                  <td class="products-cell">
+                    @for (item of order.products; track item.product.id) {
+                      <span>{{ item.qty }}× {{ item.product.name }}</span>
+                    }
+                  </td>
+                  <td>{{ time(order.dateEntry) }}</td>
+                  <td>{{ total(order) | currency: 'USD' : 'symbol' : '1.0-2' }}</td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      }
+    }
+  </section>
+</div>

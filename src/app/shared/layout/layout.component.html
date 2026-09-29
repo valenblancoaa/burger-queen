@@ -1,0 +1,24 @@
+<div class="shell">
+  <aside class="sidebar">
+    <div class="brand">
+      <span class="brand__mark">BQ</span>
+      <span class="brand__name">Burger Queen</span>
+    </div>
+
+    <nav class="nav" aria-label="Secciones">
+      @for (link of links(); track link.path) {
+        <a class="nav__link" [routerLink]="link.path" routerLinkActive="is-active">{{ link.label }}</a>
+      }
+    </nav>
+
+    <div class="session">
+      <p class="session__email">{{ user()?.email }}</p>
+      <p class="session__role">{{ roleLabel() }}</p>
+      <button class="btn btn--ghost btn--sm btn--block" type="button" (click)="logout()">Cerrar sesión</button>
+    </div>
+  </aside>
+
+  <main class="content">
+    <router-outlet />
+  </main>
+</div>

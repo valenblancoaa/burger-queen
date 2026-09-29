@@ -1,0 +1,99 @@
+<div class="page order-page">
+  <section class="menu">
+    <header class="page__header">
+      <div>
+        <h1>Nuevo pedido</h1>
+        <p>Toca un producto para agregarlo al pedido.</p>
+      </div>
+      <div class="tabs" role="tablist" aria-label="Menú">
+        @for (menu of menus; track menu) {
+          <button
+            type="button"
+            role="tab"
+            class="tab"
+            [class.is-active]="activeMenu() === menu"
+            [attr.aria-selected]="activeMenu() === menu"
+            (click)="selectMenu(menu)"
+          >
+            {{ menuLabel[menu] }}
+          </button>
+        }
+      </div>
+    </header>
+
+    @if (loading()) {
+      <p class="empty">Cargando menú…</p>
+    } @else if (loadError) {
+      <p class="alert alert--error">{{ loadError }}</p>
+    } @else if (visibleProducts().length === 0) {
+      <p class="empty">Este menú todavía no tiene productos.</p>
+    } @else {
+      <div class="grid">
+        @for (product of visibleProducts(); track product.id) {
+          <button type="button" class="product" (click)="add(product)">
+            @if (product.image) {
+              <img class="product__img" [src]="product.image" [alt]="product.name" loading="lazy" />
+            } @else {
+              <div class="product__img product__img--empty"></div>
+            }
+            <span class="product__name">{{ product.name }}</span>
+            @if (activeMenu() === 'allday') {
+              <span class="product__type">{{ typeLabel[product.type] }}</span>
+            }
+            <span class="product__price">{{ product.price | currency: 'USD' : 'symbol' : '1.0-2' }}</span>
+            @if (qtyOf(product) > 0) {
+              <span class="product__badge">{{ qtyOf(product) }}</span>
+            }
+          </button>
+        }
+      </div>
+    }
+  </section>
+
+  <aside class="summary card">
+    <h2>Resumen del pedido</h2>
+
+    <label>
+      Nombre de cliente/a
+      <input type="text" name="client" [(ngModel)]="client" placeholder="Ej. Mesa 4 · Carla" maxlength="60" />
+    </label>
+
+    @if (items().length === 0) {
+      <p class="empty">Aún no hay productos en el pedido.</p>
+    } @else {
+      <ul class="items">
+        @for (item of items(); track item.product.id) {
+          <li class="item">
+            <div class="item__info">
+              <span class="item__name">{{ item.product.name }}</span>
+              <span class="item__sub">{{ item.product.price | currency: 'USD' : 'symbol' : '1.0-2' }} c/u</span>
+            </div>
+            <div class="item__qty">
+              <button type="button" class="qty-btn" (click)="decrease(item.product)" aria-label="Quitar uno">−</button>
+              <span>{{ item.qty }}</span>
+              <button type="button" class="qty-btn" (click)="add(item.product)" aria-label="Agregar uno">+</button>
+            </div>
+            <span class="item__total">{{ item.qty * item.product.price | currency: 'USD' : 'symbol' : '1.0-2' }}</span>
+            <button type="button" class="item__remove" (click)="remove(item.product)" aria-label="Eliminar del pedido">✕</button>
+          </li>
+        }
+      </ul>
+    }
+
+    <div class="total">
+      <span>Total ({{ itemCount() }} {{ itemCount() === 1 ? 'producto' : 'productos' }})</span>
+      <strong>{{ total() | currency: 'USD' : 'symbol' : '1.0-2' }}</strong>
+    </div>
+
+    @if (sentMessage) {
+      <p class="alert alert--success" role="status">{{ sentMessage }}</p>
+    }
+    @if (sendError) {
+      <p class="alert alert--error" role="alert">{{ sendError }}</p>
+    }
+
+    <button class="btn btn--primary btn--block" type="button" [disabled]="!canSend" (click)="send()">
+      {{ sending ? 'Enviando…' : 'Enviar a cocina' }}
+    </button>
+  </aside>
+</div>

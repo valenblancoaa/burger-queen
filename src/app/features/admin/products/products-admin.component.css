@@ -1,0 +1,12 @@
+.admin { display: grid; grid-template-columns: 1fr 340px; gap: 1.5rem; align-items: start; }
+.form-card { position: sticky; top: 1.5rem; }
+.form-actions { display: flex; gap: 0.5rem; margin-top: 0.25rem; }
+.thumb-cell { width: 56px; }
+.thumb { display: block; width: 44px; height: 44px; object-fit: cover; border-radius: 8px; background: var(--bun-deep); }
+.thumb--empty { background: repeating-linear-gradient(45deg, var(--bun-deep) 0 6px, var(--bun) 6px 12px); }
+tr.is-editing td { background: #fff8e1; }
+
+@media (max-width: 960px) {
+  .admin { grid-template-columns: 1fr; }
+  .form-card { position: static; }
+}

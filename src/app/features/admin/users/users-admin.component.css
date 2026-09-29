@@ -1,0 +1,10 @@
+.admin { display: grid; grid-template-columns: 1fr 340px; gap: 1.5rem; align-items: start; }
+.form-card { position: sticky; top: 1.5rem; }
+.form-actions { display: flex; gap: 0.5rem; margin-top: 0.25rem; }
+.me { color: var(--smoke); font-size: 0.85rem; margin-left: 0.25rem; }
+tr.is-editing td { background: #fff8e1; }
+
+@media (max-width: 960px) {
+  .admin { grid-template-columns: 1fr; }
+  .form-card { position: static; }
+}
